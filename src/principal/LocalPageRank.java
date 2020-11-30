@@ -1,4 +1,8 @@
 package principal;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -10,7 +14,7 @@ import interfaces.kernel.JCL_result;
 
 public class LocalPageRank {
 	
-	public void execute(int interacoes){
+	public void execute(int interacoes) throws IOException{
 		JCL_facade jclLambari = JCL_FacadeImpl.getInstanceLambari();
 		JCL_facade jclPacu = JCL_FacadeImpl.getInstance();		
 		
@@ -19,7 +23,7 @@ public class LocalPageRank {
 		ConcurrentHashMap<String, Neighbors> localGraph = (ConcurrentHashMap<String, Neighbors>) jclLambari.getValue("localGraph").getCorrectResult();
 		
 		ConcurrentHashMap<String, String> localGraphNeighbors = (ConcurrentHashMap<String, String>) jclLambari.getValue("localGraphNeighbors").getCorrectResult();
-		
+		BufferedWriter buffWrite = new BufferedWriter(new FileWriter("arquivo.txt"));
 		for(int a = 0; a<interacoes; a++) {
 			for(String key: localGraph.keySet()){
 				Neighbors ns = localGraph.get(key);
@@ -39,8 +43,10 @@ public class LocalPageRank {
 				
 				localGraph.put(key, ns);
 					
-					
-				//System.out.println("key: " + key + " pagerank: " + ns.pagerank);
+				if(a == interacoes -1)
+					buffWrite.append("key: " + key + " pagerank: " + ns.pagerank+ System.lineSeparator());
+				
+//				System.out.println("key: " + key + " pagerank: " + ns.pagerank);
 			
 					}
 			}
@@ -60,8 +66,10 @@ public class LocalPageRank {
 			jclPacu.getAllResultBlocking(tickets);
 			
 			keys.clear();
+			
+			
 		}
-		
+		buffWrite.close();
 		
 	}
 

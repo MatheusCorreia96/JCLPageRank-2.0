@@ -36,7 +36,8 @@ public class LoadGraphInJCL {
 		
 		for(String oneK:keys){
 			//jcl.instantiateGlobalVar(oneK, graphNeighbors.get(oneK).edgeOut);
-			int hostNum = oneK.hashCode()%devs.size();
+			
+			int hostNum = Math.abs(oneK.hashCode()%devs.size());
 			Neighbors n = graphNeighbors.get(oneK);
 			manyGraphNeighbors[hostNum].put(oneK, n);					
 			for(String v: n.neighbors) {
